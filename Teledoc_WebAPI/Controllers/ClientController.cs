@@ -1,25 +1,33 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Teledoc_WebAPI.Tables;
 
 namespace Teledoc_WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TeledocDbController : ControllerBase
+    public class ClientController : ControllerBase
     {
         IDbActions dbActions;
-        public TeledocDbController(IDbActions dbActions)
+        public ClientController(IDbActions dbActions)
         {
             this.dbActions = dbActions;
         }
 
+        /// <summary>
+        /// Просмотр всех клиентов
+        /// </summary>
+        /// <returns>Перечисление клиентов</returns>
         [HttpGet(Name = "GetAllClients")]
         public IEnumerable<Client> GetClients()
         {
             return dbActions.GetClients();
         }
 
+        /// <summary>
+        /// Создание клиента
+        /// </summary>
+        /// <param name="client">Объект нового клиента</param>
+        /// <returns>Результат выполнения</returns>
         [HttpPost]
         [Route("CreateClient")]
         public IActionResult CreateClient([FromBody] Client client)
@@ -32,6 +40,12 @@ namespace Teledoc_WebAPI.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Обновить данные клиента
+        /// </summary>
+        /// <param name="Id">id обновляемого клиента</param>
+        /// <param name="updatedClient">объект нового клиента</param>
+        /// <returns></returns>
         [HttpPut]
         [Route("UpdateClient")]
         public IActionResult UpdateClient(int Id, [FromBody] Client updatedClient)
@@ -51,6 +65,11 @@ namespace Teledoc_WebAPI.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Удаление клиента
+        /// </summary>
+        /// <param name="Id">id удаляемого клиента</param>
+        /// <returns>Результат выполнения</returns>
         [HttpDelete]
         [Route("DeleteClient")]
         public IActionResult DeleteClient(int Id)
@@ -63,51 +82,6 @@ namespace Teledoc_WebAPI.Controllers
             }
 
             return new ObjectResult(deletedClient);
-        }
-
-        [HttpPost]
-        [Route("CreateFounder")]
-        public IActionResult CreateFounder([FromBody] Founder founder)
-        {
-            if (founder == null)
-            {
-                return BadRequest();
-            }
-            dbActions.CreateFounder(founder);
-            return Ok();
-        }
-
-        [HttpPut]
-        [Route("UpdateFounder")]
-        public IActionResult UpdateFounder(int Id, [FromBody] Founder updatedFounder)
-        {
-            if (updatedFounder == null || updatedFounder.Id != Id)
-            {
-                return BadRequest();
-            }
-
-            var client = dbActions.GetFounder(Id);
-            if (client == null)
-            {
-                return NotFound();
-            }
-
-            dbActions.UpdateFounder(updatedFounder);
-            return Ok();
-        }
-
-        [HttpDelete]
-        [Route("DeleteFounder")]
-        public IActionResult DeleteFounder(int Id)
-        {
-            var deletedFounder = dbActions.DeleteFounder(Id);
-
-            if (deletedFounder == null)
-            {
-                return BadRequest();
-            }
-
-            return new ObjectResult(deletedFounder);
         }
     }
 }
